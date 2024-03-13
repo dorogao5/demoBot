@@ -35,8 +35,7 @@ class HelpHandler(BaseHandler):
 
 class WeatherHandler(BaseHandler):
     async def handle(self, update: tg.Update, context: tg_ext.ContextTypes.DEFAULT_TYPE) -> None:
-        await update.message.reply_text(self.messages.weather(update.message.text)[0])
-        await update.message.reply_text(self.messages.weather(update.message.text)[1])
+        await update.message.reply_text(self.messages.weather(update.message.text))
 
 
 def setup_handlers(application: tg_ext.Application) -> None:

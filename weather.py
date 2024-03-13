@@ -4,16 +4,18 @@ import requests
 import requests_cache
 import time as tm
 from retry_requests import retry
-import math
 
 
 def get_weather(city_name):
     # get city location
-    city_data = requests.get(
-        f'https://geocoding-api.open-meteo.com/v1/search?name={city_name}&count=1&language=ru&format=json').json()
-    results = city_data['results'][0]
-    city_latitude = results['latitude']
-    city_longitude = results['longitude']
+    try:
+        city_data = requests.get(
+            f'https://geocoding-api.open-meteo.com/v1/search?name={city_name}&count=1&language=ru&format=json').json()
+        results = city_data['results'][0]
+        city_latitude = results['latitude']
+        city_longitude = results['longitude']
+    except KeyError:
+        return 'Вы ввели некорректное название города'
 
     # Set up the Open-Meteo API client with cache and retry on error
     cache_session = requests_cache.CachedSession('.cache', expire_after=3600)
@@ -53,8 +55,7 @@ def get_weather(city_name):
         if i > h:
             weather += f'{i}:00    {temperature}°C    {int(hourly_precipitation[i])} \n'
 
-    text = (f"Температура на улице: {current_apparent_temperature} °C\n"
+    text = (f"Погода сейчас:\nТемпература на улице: {current_apparent_temperature} °C\n"
             f"Осадки: {current_precipitation} \n"
-            f"Скорость ветра: {current_wind_speed_10m} м/с  \n")
-    return text, weather
-
+            f"Скорость ветра: {current_wind_speed_10m} м/с  \n\n" + weather)
+    return text
