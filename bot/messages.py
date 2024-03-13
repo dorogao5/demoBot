@@ -2,6 +2,8 @@ import abc
 
 import telegram as tg
 
+import weather
+
 
 class BaseMessages(abc.ABC):
     @abc.abstractmethod
@@ -16,16 +18,23 @@ class BaseMessages(abc.ABC):
     def echo(self, text: str) -> str:
         raise NotImplemented
 
+    @abc.abstractmethod
+    def weather(self, text: str) -> tuple:
+        raise NotImplemented
+
 
 class RegularUser(BaseMessages):
     def start(self) -> str:
-        return 'Привет'
+        return 'Здравствуйте'
 
     def help(self) -> str:
-        return 'Вам нужно приобрести подписку'
+        return 'Просто введите название города, чтобы узнать погоду'
 
     def echo(self, text: str) -> str:
         return f'{text}'
+
+    def weather(self, text: str) -> tuple:
+        return weather.get_weather(text)
 
 
 class PremiumUser(RegularUser):
@@ -33,11 +42,11 @@ class PremiumUser(RegularUser):
         return 'Здравствуйте!'
 
     def help(self) -> str:
-        return 'Наш менеджер скоро свяжется с Вами'
+        return 'слишком богатый'
 
 
 def get_message(user: tg.User) -> BaseMessages:
-    if not user.is_premium:
+    if user.is_premium:
         return PremiumUser()
     else:
         return RegularUser()

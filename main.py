@@ -1,5 +1,6 @@
 import logging
 import argparse
+import secrets
 
 from bot import handlers
 
@@ -15,18 +16,13 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 
 logger = logging.getLogger(__name__)
 
-
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--token', type=str, required=True)
-    return parser.parse_args()
+tg_token = open('C:/Users/ilasn/PycharmProjects/demoBot/secrets/tg_token').readline()
 
 
 def main() -> None:
-    args = parse_args()
     """Start the bot."""
     # Create the Application and pass it your bot's token.
-    application = tg_ext.Application.builder().token(args.token).build()
+    application = tg_ext.Application.builder().token(tg_token).build()
 
     handlers.setup_handlers(application)
 

@@ -33,14 +33,14 @@ class HelpHandler(BaseHandler):
         await update.message.reply_text(self.messages.help())
 
 
-class EchoHandler(BaseHandler):
+class WeatherHandler(BaseHandler):
     async def handle(self, update: tg.Update, context: tg_ext.ContextTypes.DEFAULT_TYPE) -> None:
-        await update.message.reply_text(update.message.echo(update.message.text))
+        await update.message.reply_text(self.messages.weather(update.message.text)[0])
+        await update.message.reply_text(self.messages.weather(update.message.text)[1])
 
 
 def setup_handlers(application: tg_ext.Application) -> None:
     application.add_handler(tg_ext.CommandHandler('start', StartHandler()))
     application.add_handler(tg_ext.CommandHandler('help', HelpHandler()))
-
+    application.add_handler(tg_ext.MessageHandler(tg_ext.filters.TEXT & ~tg_ext.filters.COMMAND, WeatherHandler()))
     # on non command i.e. message - echo the message on Telegram
-    application.add_handler(tg_ext.MessageHandler(tg_ext.filters.TEXT & ~tg_ext.filters.COMMAND, EchoHandler()))
